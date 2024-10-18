@@ -4,7 +4,7 @@ metadata:
   name: server
   namespace: myapp
 spec:
-  replicas: 1
+  replicas: 1  # Initially, we start with 1 replica
   selector:
     matchLabels:
       app: server
@@ -14,20 +14,29 @@ spec:
         app: server
     spec:
       containers:
-        - name: server
-          image: iamalihdr116/serverup # Replace with the image built from your server Dockerfile
-          env:
-            - name: DB_HOST
-              value: mysql
-            - name: DB_USER
-              value: ali
-            - name: DB_PASSWORD
-              value: root
-            - name: DB_NAME
-              value: crudmysql
-          ports:
-            - containerPort: 8001
-          command: ["./wait-for-it.sh", "mysql:3306", "--", "nodemon", "app.js"]
+      - name: server
+        image: iamalihdr116/serverup  # Replace with the image built from your server Dockerfile
+        env:
+          - name: DB_HOST
+            value: mysql
+          - name: DB_USER
+            value: ali
+          - name: DB_PASSWORD
+            value: root
+          - name: DB_NAME
+            value: crudmysql
+        ports:
+          - containerPort: 8001
+        command: ["./wait-for-it.sh", "mysql:3306", "--", "nodemon", "app.js"]
+        resources:
+          # Minimum resources the container will request from the node
+          requests:
+            cpu: "200m"
+            memory: "128Mi"
+          # Maximum resources the container can use
+          limits:
+            cpu: "500m"
+            memory: "256Mi"
 ---
 apiVersion: v1
 kind: Service
